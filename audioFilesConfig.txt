@@ -1,4 +1,4 @@
+cow.mp3
+explosion.mp3
 mlg-airhorn.mp3
-cow-moo.mp3
-vine-boom.mp3
-squeaky-toy_1.mp3
+rubber-duck.mp3
