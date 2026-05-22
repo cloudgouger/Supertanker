@@ -5,58 +5,30 @@ import dearpygui.dearpygui as dpg
 import os
 import shutil
 
-audioFiles = os.listdir("data/sounds")
-iconFiles = os.listdir("data/icons")
-
-audioFileExtensionless = []
-iconFileExtensionless = []
-audioToAdd = []
-iconToAdd = []
-
-for filename in audioFiles:
-    if filename[0] == '.':
-        audioFiles.remove(filename)
-for filename in iconFiles:
-    if filename[0] == '.':
-        iconFiles.remove(filename)
-
-for i, filename in enumerate(audioFiles):
-    name, fileExtension = os.path.splitext(filename)
-    audioFileExtensionless.append(name)
-for i, filename in enumerate(iconFiles):
-    name, fileExtension = os.path.splitext(filename)
-    iconFileExtensionless.append(name)
-
-audioFiles.sort()
-iconFiles.sort()
-
+directories = os.listdir('data/')
+searchableDirs = []
+audioFiles = []
+tempDict = {}
+for x in directories:
+    if '.' not in x:
+        searchableDirs.append(x)
+for x in searchableDirs:
+    files = os.listdir(f'data/{x}/')
+    files.sort()
+    for y in files:
+        tempDict['name'] = x
+        if '.' in y:
+            if '.mp3' in y:
+                tempDict['audio'] = y
+            if '.png' in y:
+                tempDict['icon'] = y
+    audioFiles.append(tempDict)
+    tempDict = {}
 print(audioFiles)
-print(iconFiles)
-audioFileExtensionless = []
-iconFileExtensionless = []
+        
+exit()
 
 
-def playSound(sender, app_data, user_data):
-    print(user_data)
-    sfx, sR = sf.read(f"data/sounds/{user_data}")
-    print(f"read {user_data}")
-    sd.play(sfx)
-    print("played sound")
-
-def addAudio(sender, app_data, user_data):
-    audioToAdd.append(app_data['file_path_name'])
-    audioToAdd.append(app_data['file_name'])
-    shutil.copy2(app_data['file_path_name'], f'data/sounds/{app_data['file_name']}')
-
-def addIcon(sender, app_data, user_data):
-    iconToAdd.append(app_data['file_path_name'])
-    iconToAdd.append(app_data['file_name'])
-    
-
-def addEntry(sender, app_data, user_data):
-    if (len(audioToAdd) == 2 and len(iconToAdd) == 2):
-        shutil.copy2(audioToAdd[0], f'data/sounds/{audioToAdd[1]}')
-        shutil.copy2(iconToAdd[0], f'data/sounds/{iconToAdd[1]}')
 
 dpg.create_context()
 dpg.create_viewport()
