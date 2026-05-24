@@ -28,6 +28,7 @@ for x in searchableDirs:
 print(audioFiles)
 
 def playSound(sender, app_data, user_data):
+    print(f"button pressed: {sender}")
     print(user_data)
     sfx, sR = sf.read(user_data)
     print(f"read {user_data}")
@@ -81,7 +82,7 @@ with dpg.window(tag="Supertanker"):
                 except:
                     print("could not add text button")
         try:
-            print(f"trying to add button {x}")
+            print(f"trying to add button {filename['name']}")
             dpg.add_image_button(filename['name'], callback=playSound, user_data=f"data/{filename['name']}/{filename['audio']}", width=100, height=100)
         except:
             print("could not add image button")
