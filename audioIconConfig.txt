@@ -1,4 +1,0 @@
-cow.png
-explosion.png
-mlg-airhorn.png
-rubber-duck.png

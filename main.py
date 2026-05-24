@@ -27,6 +27,9 @@ for x in searchableDirs:
     tempDict = {}
 print(audioFiles)
 
+def setDevice(sender, app_data, user_data):
+    sd.default.device = app_data
+
 def playSound(sender, app_data, user_data):
     print(f"button pressed: {sender}")
     print(user_data)
@@ -78,7 +81,7 @@ with dpg.window(tag="Supertanker"):
             if x == filename['name']:
                 try:
                     print(f"trying to add button {x}")
-                    dpg.add_button(label=filename['name'], callback=playSound, user_data=filename['audio'], width=100, height=100)
+                    dpg.add_button(label=filename['name'], callback=playSound, user_data=f"data/{filename['name']}/{filename['audio']}", width=100, height=100)
                 except:
                     print("could not add text button")
         try:
@@ -86,6 +89,11 @@ with dpg.window(tag="Supertanker"):
             dpg.add_image_button(filename['name'], callback=playSound, user_data=f"data/{filename['name']}/{filename['audio']}", width=100, height=100)
         except:
             print("could not add image button")
+    audioDevices = sd.query_devices()
+    deviceNames = []
+    for x in audioDevices:
+        deviceNames.append(f"{x['name']}")
+    dpg.add_combo(items=deviceNames, callback=setDevice)
 
     dpg.set_primary_window("Supertanker", True)
 
