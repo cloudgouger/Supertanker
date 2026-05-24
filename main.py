@@ -8,6 +8,7 @@ import shutil
 directories = os.listdir('data/')
 searchableDirs = []
 audioFiles = []
+textButtons = []
 tempDict = {}
 for x in directories:
     if '.' not in x:
@@ -25,8 +26,13 @@ for x in searchableDirs:
     audioFiles.append(tempDict)
     tempDict = {}
 print(audioFiles)
-        
-exit()
+
+def playSound(sender, app_data, user_data):
+    print(user_data)
+    sfx, sR = sf.read(user_data)
+    print(f"read {user_data}")
+    sd.play(sfx)
+    print("played sound")
 
 
 
@@ -35,10 +41,10 @@ dpg.create_viewport()
 dpg.setup_dearpygui()
 
 
-with dpg.file_dialog(show=False, tag="mp3_dialog", width=700, height=400,callback=addAudio, user_data="mp3"):
-    dpg.add_file_extension(".mp3")
-with dpg.file_dialog(show=False, tag="png_dialog", width=700, height=400,callback=addAudio, user_data="png"):
-    dpg.add_file_extension(".png")
+#with dpg.file_dialog(show=False, tag="mp3_dialog", width=700, height=400,callback=addAudio, user_data="mp3"):
+    #dpg.add_file_extension(".mp3")
+#with dpg.file_dialog(show=False, tag="png_dialog", width=700, height=400,callback=addAudio, user_data="png"):
+    #dpg.add_file_extension(".png")
 
 with dpg.font_registry():
     newFont = dpg.add_font("data/opensans.ttf", 20)
@@ -50,29 +56,36 @@ def showDialogs():
 
 with dpg.window(tag="Supertanker"):
     dpg.bind_font(newFont)
-
-    dpg.add_button(label="add sound", callback=showDialogs)
-    for i, iconName in enumerate(iconFiles):
-        print(f"loading {iconName}")
-        print(dpg.load_image(iconName))
+    for i, texname in enumerate(audioFiles):
         try:
-            imageWidth, imageHeight, imageChannels, imageData = dpg.load_image(f"data/icons/{iconName}")
+            print(f"trying to add data/{texname['name']}/{texname['icon']}")
+            imageWidth, imageHeight, imageChannels, imageData = dpg.load_image(f"data/{texname['name']}/{texname['icon']}")
             with dpg.texture_registry():
                 dpg.add_static_texture(
-                    width=imageHeight,
-                    height=imageWidth,
+                    width=imageWidth,
+                    height=imageHeight,
                     default_value=imageData,
-                    tag=iconName
+                    tag=texname['name']
+                    
                 )
-                print(f"added texture {iconName}")
+            print("added successfully")
         except:
-            print("texture could not be added")
+            print("failed to add texture to registry. adding sound without icon")
+            textButtons.append(texname['name'])
     for i, filename in enumerate(audioFiles):
+        for x in textButtons:
+            if x == filename['name']:
+                try:
+                    print(f"trying to add button {x}")
+                    dpg.add_button(label=filename['name'], callback=playSound, user_data=filename['audio'], width=100, height=100)
+                except:
+                    print("could not add text button")
         try:
-            dpg.add_image_button(iconFiles[i], label="button", callback=playSound, user_data=audioFiles[i], width=100, height=100)
-            print(f"added icon {iconFiles[i]}")
+            print(f"trying to add button {x}")
+            dpg.add_image_button(filename['name'], callback=playSound, user_data=f"data/{filename['name']}/{filename['audio']}", width=100, height=100)
         except:
-            print(f"failed {filename}")
+            print("could not add image button")
+
     dpg.set_primary_window("Supertanker", True)
 
 dpg.show_viewport()
