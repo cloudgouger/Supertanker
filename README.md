@@ -1,6 +1,6 @@
 # Supertanker
 
-![screenshot of window](.screenshot.png)
+![screenshot of window](screenshot.png)
 
 A cross-platform GUI soundboard app that allows you to play sound effects (mp3 files) into your microphone
 
