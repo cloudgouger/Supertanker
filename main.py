@@ -3,9 +3,22 @@ import sounddevice as sd
 import soundfile as sf
 import dearpygui.dearpygui as dpg
 import os
-import shutil
+import requests
+from zipfile import ZipFile
+from pathlib import Path
 
-directories = os.listdir('data/')
+print(f"{Path.home()}/supertanker/data/")
+
+
+dirPrefix = f"{Path.home()}/supertanker/data/"
+
+if os.path.exists(dirPrefix) == False:
+    dataFile = requests.get("https://raw.githubusercontent.com/cloudgouger/Supertanker/refs/heads/main/supertanker.zip")
+    open(f'{Path.home()}/supertanker.zip', 'w+b').write(dataFile.content)
+    with ZipFile(f'{Path.home()}/supertanker.zip') as zip:
+        zip.extractall(path=Path.home())
+
+directories = os.listdir(dirPrefix)
 searchableDirs = []
 audioFiles = []
 textButtons = []
@@ -14,7 +27,7 @@ for x in directories:
     if '.' not in x:
         searchableDirs.append(x)
 for x in searchableDirs:
-    files = os.listdir(f'data/{x}/')
+    files = os.listdir(f'{dirPrefix}{x}/')
     files.sort()
     for y in files:
         tempDict['name'] = x
@@ -51,7 +64,7 @@ dpg.setup_dearpygui()
     #dpg.add_file_extension(".png")
 
 with dpg.font_registry():
-    newFont = dpg.add_font("data/opensans.ttf", 20)
+    newFont = dpg.add_font(f"{dirPrefix}opensans.ttf", 20)
 
 def showDialogs():
     dpg.show_item("mp3_dialog") 
@@ -59,11 +72,12 @@ def showDialogs():
 
 
 with dpg.window(tag="Supertanker"):
+    dpg.set_viewport_title("Supertanker")
     dpg.bind_font(newFont)
     for i, texname in enumerate(audioFiles):
         try:
-            print(f"trying to add data/{texname['name']}/{texname['icon']}")
-            imageWidth, imageHeight, imageChannels, imageData = dpg.load_image(f"data/{texname['name']}/{texname['icon']}")
+            print(f"trying to add {dirPrefix}{texname['name']}/{texname['icon']}")
+            imageWidth, imageHeight, imageChannels, imageData = dpg.load_image(f"{dirPrefix}{texname['name']}/{texname['icon']}")
             with dpg.texture_registry():
                 dpg.add_static_texture(
                     width=imageWidth,
@@ -81,18 +95,19 @@ with dpg.window(tag="Supertanker"):
             if x == filename['name']:
                 try:
                     print(f"trying to add button {x}")
-                    dpg.add_button(label=filename['name'], callback=playSound, user_data=f"data/{filename['name']}/{filename['audio']}", width=100, height=100)
+                    dpg.add_button(label=filename['name'], callback=playSound, user_data=f"{dirPrefix}{filename['name']}/{filename['audio']}", width=100, height=100)
                 except:
                     print("could not add text button")
         try:
             print(f"trying to add button {filename['name']}")
-            dpg.add_image_button(filename['name'], callback=playSound, user_data=f"data/{filename['name']}/{filename['audio']}", width=100, height=100)
+            dpg.add_image_button(filename['name'], callback=playSound, user_data=f"{dirPrefix}{filename['name']}/{filename['audio']}", width=100, height=100)
         except:
             print("could not add image button")
     audioDevices = sd.query_devices()
     deviceNames = []
     for x in audioDevices:
         deviceNames.append(f"{x['name']}")
+    dpg.add_text("Select your virtual audio device:")
     dpg.add_combo(items=deviceNames, callback=setDevice)
 
     dpg.set_primary_window("Supertanker", True)
