@@ -13,9 +13,11 @@ Requirements
 
 How to use:
 
-- clone repo with git or download zip
+- clone repo or download .app from releases
 
-- Run main.py to launch application, any errors will be printed in the log
+- Run executable to launch application, any errors will be printed in the log
+
+- no need to download additional data (included sfx, font, etc), they will be downloaded into your home folder if not present
 
 - In the drop down at the bottom of the window, select your virtual audio device
 
@@ -31,7 +33,7 @@ MLG airhorn
 
 Rubber duck
 
-Add more by creating a folder in the data folder for your new sound. It should have a .mp3 and a .png (optional) for your sound. If there is no png, it will display a button with the folder name on it.
+Add more by creating a folder in the data folder (present in ~/supertanker/data) for your new sound. It should have a .mp3 and a .png (optional) for your sound. If there is no png, it will display a button with the folder name on it.
 
 To do:
 
